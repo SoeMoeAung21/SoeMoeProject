@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, Slider, Switch, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Slider, Switch, TextInput, Button } from 'react-native';
 
 export default class App extends React.Component {
 
@@ -9,7 +9,11 @@ export default class App extends React.Component {
       sliderValue: 0,
       isSwitchOn: true,
       switchTextVar: 'Switch On',
-      textInputResult: ''
+      textInputResult: '',
+      buttonTitle: 'Click to hide',
+      imageHeight: 100,
+      imageAppearText: 'Image is showing',
+      imageColor: '#00ff00'
     };
   }
 
@@ -17,9 +21,9 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.container}>
+        <View style={styles.uppeContainer}>
           <Text style={styles.projectName}>SoeMoe Project</Text>
-          <Image style={styles.soemoeImage}
+          <Image style={[styles.soemoeImage, {height: this.state.imageHeight}]}
           source={require('./Images/yatanarpon.jpg')}/>
         </View>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -33,6 +37,8 @@ export default class App extends React.Component {
               </TextInput>
             </View>
             <Text style={styles.labelresult}>{this.state.textInputResult}</Text>
+            <Button  onPress={()=> this.buttonValueChange()} title={this.state.buttonTitle} color="#000000" />
+            <Text style={[styles.imageShowingText, {color: this.state.imageColor}]}>{this.state.imageAppearText}</Text>
         </ScrollView>
       </View>
 
@@ -65,18 +71,36 @@ export default class App extends React.Component {
       textInputResult: text
     })
   }
-}
+
+  buttonValueChange(){
+    if(this.state.buttonTitle === 'Click to hide'){
+      this.setState({
+        buttonTitle: 'Click to show',
+        imageHeight: 0,
+        imageAppearText: 'Image is hiding',
+        imageColor: '#ff0000'
+      })
+    }else{
+      this.setState({
+        buttonTitle: 'Click to hide',
+        imageHeight: 100,
+        imageAppearText: 'Image is showing',
+        imageColor: '#00ff00'
+      })
+    }
+  }
+}//End of APP class
+
 
 const styles = StyleSheet.create({
   mainContainer:{
     flex:1,
   },
-  container: {
+  uppeContainer: {
     flex: 0.3,
     backgroundColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
-
   },
   projectName: {
     marginBottom: 10,
@@ -118,5 +142,8 @@ const styles = StyleSheet.create({
     width: 200,
     borderWidth: 2,
     borderColor: '#090909'
+  },
+  imageShowingText:{
+
   }
 });
