@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, Slider, Switch, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Slider, Switch, TextInput, Button, Dimensions, ActivityIndicator, Animated  } from 'react-native';
+var device = Dimensions.get('window');
+import styles from './styles/AppStyle'
 
 export default class App extends React.Component {
 
@@ -13,18 +15,40 @@ export default class App extends React.Component {
       buttonTitle: 'Click to hide',
       imageHeight: 100,
       imageAppearText: 'Image is showing',
-      imageColor: '#00ff00'
+      imageColor: '#00ff00',
+      yRotation: '0deg',
+      xRotation: '0deg',
+      loading: true,
+      fadingValue: new Animated.Value(0),
     };
   }
 
+ componentDidMount(){
+
+   setTimeout(() => {
+      this.setState({
+        loading: false
+      })
+    this.fadingInImageView();
+    }, 4000);
+ }
+
+ fadingInImageView(){
+   Animated.timing(                  // Animate over time
+     this.state.fadingValue,            // The animated value to drive
+     {
+       toValue: 1,                   // Animate to opacity: 1 (opaque)
+       duration: 5000,              // Make it take a while
+     }
+   ).start();
+ }
 
   render() {
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.uppeContainer}>
+        <View style={[styles.uppeContainer, {  transform: [  {scale: 1},{rotateY: this.state.xRotation}, {rotateX: this.state.yRotation}, {perspective: 1000},]}]}>
           <Text style={styles.projectName}>SoeMoe Project</Text>
-          <Image style={[styles.soemoeImage, {height: this.state.imageHeight}]}
-          source={require('./Images/yatanarpon.jpg')}/>
+          {this.renderImageLoadingView()}
         </View>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <Text style={styles.point}>{this.state.sliderValue}</Text>
@@ -39,11 +63,32 @@ export default class App extends React.Component {
             <Text style={styles.labelresult}>{this.state.textInputResult}</Text>
             <Button  onPress={()=> this.buttonValueChange()} title={this.state.buttonTitle} color="#000000" />
             <Text style={[styles.imageShowingText, {color: this.state.imageColor}]}>{this.state.imageAppearText}</Text>
+            <Text style={styles.imageShowingText}>Device Width is : {device.width}</Text>
+            <Text style={styles.imageShowingText}>Device Height is : {device.height}</Text>
+            <View style={styles.imageChangingView}>
+              <Button  onPress={()=> this.xRotationChange()} title="Image rotate to X" color="#000000" />
+              <Button  onPress={()=> this.yRotationChange()} title="Image rotate to Y" color="#000000" />
+            </View>
+            <Button  onPress={()=> this.originalChange()} title="Image original" color="#000000" />
         </ScrollView>
       </View>
 
     );
   }
+
+  renderImageLoadingView(){
+    if(this.state.loading){
+      return(
+          <ActivityIndicator size="large" color="#ff5555" animating={this.state.loading}/>
+      )
+    }else{
+      return(
+        <Animated.Image style={[styles.soemoeImage, {opacity: this.state.fadingValue}, {height: this.state.imageHeight}]}source={require('./Images/yatanarpon.jpg')}/>
+      )
+    }
+  }
+
+  //
 
   sliderValueChangeHandler(value){
     this.setState({
@@ -58,11 +103,13 @@ export default class App extends React.Component {
     })
     if(value){
       this.setState({
-        switchTextVar : 'Switch is on'
+        switchTextVar : 'Switch is on',
+        fadingValue:1
       })
     }else{
       this.setState({
-        switchTextVar : 'Switch is off'
+        switchTextVar : 'Switch is off',
+        fadingValue:0.5
       })
     }
   }
@@ -89,61 +136,39 @@ export default class App extends React.Component {
       })
     }
   }
-}//End of APP class
-
-
-const styles = StyleSheet.create({
-  mainContainer:{
-    flex:1,
-  },
-  uppeContainer: {
-    flex: 0.3,
-    backgroundColor: '#000000',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  projectName: {
-    marginBottom: 10,
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#555555'
-  },
-  soemoeImage:{
-    width: 300,
-    height: 100
-  },
-  scrollContainer:{
-    alignItems: 'center',
-
-  },
-  point:{
-    marginTop: 30,
-    marginBottom: 30
-  },
-  slider:{
-
-    width: 300,
-    height: 20
-  },
-  switchText:{
-
-    marginTop: 30,
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#0000ff'
-  },
-  textInputContainer:{
-    alignItems: 'center',
-    flexDirection:'row'
-  },
-  textInputText:{
-    marginLeft: 5,
-    height: 30,
-    width: 200,
-    borderWidth: 2,
-    borderColor: '#090909'
-  },
-  imageShowingText:{
-
+  xRotationChange(){
+    if(this.state.xRotation === '0deg'){
+      this.setState({
+        xRotation: '180deg'
+      })
+    }else{
+      this.setState({
+        xRotation: '0deg'
+      })
+    }
   }
-});
+  yRotationChange(){
+    if(this.state.yRotation === '0deg'){
+      this.setState({
+        yRotation: '180deg'
+      })
+    }else{
+      this.setState({
+        yRotation: '0deg'
+      })
+    }
+  }
+  originalChange(){
+    if(this.state.yRotation === '180deg', this.state.xRotation === '1800deg'){
+      this.setState({
+        yRotation: '0deg',
+        xRotation: '0deg'
+      })
+    }else{
+      this.setState({
+        yRotation: '0deg',
+        xRotation: '0deg'
+      })
+    }
+  }
+}//End of APP class
