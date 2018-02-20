@@ -30,6 +30,8 @@ export default class App extends React.Component {
       <Text style={styles.userNameTestStyle}>{this.state.outputMessage}</Text>
       <Button onPress={()=> this.loggingIn()} title='Log In'/>
       <Button onPress={()=> this.dogPage()} title='Go to Dog Page'/>
+      <Button onPress={()=> this.testingPage()} title='Go to test Page'/>
+      <Button onPress={()=> this.lightBoxTesting()} title='LightBox'/>
       </View>
 
     );
@@ -62,5 +64,11 @@ export default class App extends React.Component {
   }
   dogPage(){
     Actions.dogPage()
+  }
+  testingPage(){
+    Actions.testPage()
+  }
+  lightBoxTesting(){
+    Actions.testPopUp()
   }
 }//End of APP class
